@@ -1,26 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Card, List, Button } from "antd";
+import * as courseActions from "./../../store/actions/course";
+
+import { Card, List, Input, Button } from "antd";
 
 export default function Dashboard() {
-  const courses = useSelector(state => state.data);
+  const [input, setInput] = useState("");
+
+  const courses = useSelector(state => state.course);
   const dispatch = useDispatch();
 
-  function addCourse(){
-    dispatch({ type: 'ADD_COURSE', title: 'Teste' })
+  function addCourse() {
+    dispatch(courseActions.addCourse(input));
+  }
+
+  function removeCourse(id){
+    dispatch(courseActions.removeCourse(id));
   }
 
   return (
     <>
       <Card>
-        <h3 style={{ margin: "16px 0" }}>Small Size</h3>
+        <Input
+          placeholder="Basic usage"
+          value={input}
+          onChange={event => setInput(event.target.value)}
+        />
+        <Button
+          type="primary"
+          onClick={addCourse}
+          style={{ marginTop: "16px", marginBottom: "16px" }}
+        >
+          Adicionar
+        </Button>
         <List
-          size="small"
           bordered
           dataSource={courses}
-          renderItem={item => <List.Item>{item}</List.Item>}
+          renderItem={item => (
+            <List.Item actions={[<Button type="danger" onClick={() => removeCourse(item.id)}>Excluir</Button>]}>
+              {item.title}
+            </List.Item>
+          )}
         />
-        <Button type="primary" onClick={addCourse} style={{ marginTop: "16px" }}>Adicionar</Button>
       </Card>
     </>
   );
