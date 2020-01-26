@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using react.net.Repositories.Todo;
 
 namespace react.net
 {
@@ -22,6 +23,9 @@ namespace react.net
         {
 
             services.AddControllersWithViews();
+
+            services.AddSingleton<IConfiguration>(Configuration);
+            services.AddSingleton<ITodoRepository, TodoRepository>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
