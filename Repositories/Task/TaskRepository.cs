@@ -6,15 +6,15 @@ using Microsoft.Extensions.Configuration;
 using react.net.Helpers;
 using react.net.Models;
 
-namespace react.net.Repositories.Todo
+namespace react.net.Repositories.Task
 {
-    public class TodoRepository : RepositoryConnector, ITodoRepository
+    public class TaskRepository : RepositoryConnector, ITaskRepository
     {
-        public TodoRepository(IConfiguration configuration) : base(configuration) { }
+        public TaskRepository(IConfiguration configuration) : base(configuration) { }
 
-        public void Create(TodoModel obj)
+        public void Create(TaskModel obj)
         {
-            string query = $@"INSERT INTO [dbo].[Todo]
+            string query = $@"INSERT INTO [dbo].[Task]
                             ([Name]
                             ,[Disabled])
                             VALUES
@@ -27,14 +27,14 @@ namespace react.net.Repositories.Todo
             }
         }
 
-        public IEnumerable<TodoModel> GetAll()
+        public IEnumerable<TaskModel> GetAll()
         {
-            IEnumerable<TodoModel> result;
-            string query = "SELECT * FROM Todo";
+            IEnumerable<TaskModel> result;
+            string query = "SELECT * FROM Task";
 
             using (var con = new SqlConnection(base.GetConnection()))
             {
-                result = con.Query<TodoModel>(query);
+                result = con.Query<TaskModel>(query);
             }
 
             return result;
@@ -42,15 +42,15 @@ namespace react.net.Repositories.Todo
 
         public void Remove(int id)
         {
-            string querySelect = $@"SELECT * FROM Todo WHERE ID = {id}";
-            string queryDisable = $@"UPDATE Todo SET Disabled = 1 WHERE ID = {id}";
+            string querySelect = $@"SELECT * FROM Task WHERE ID = {id}";
+            string queryDisable = $@"UPDATE Task SET Disabled = 1 WHERE ID = {id}";
 
             using (var con = new SqlConnection(base.GetConnection()))
             {
-                var user = con.Query<TodoModel>(querySelect).FirstOrDefault();
+                var task = con.Query<TaskModel>(querySelect).FirstOrDefault();
 
-                if (user == null)
-                    throw new AppException("User not found.");
+                if (task == null)
+                    throw new AppException("Task not found.");
 
                 con.Execute(queryDisable);
             }

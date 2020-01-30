@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export function loadCourse() {
-  const request = axios.get('https://localhost:5001/api/todo');
+  const request = axios.get('https://localhost:5001/api/task');
   return {
     type: "LOAD_COURSE",
     payload: request

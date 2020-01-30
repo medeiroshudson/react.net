@@ -2,19 +2,19 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using react.net.Models;
-using react.net.Repositories.Todo;
+using react.net.Repositories.Task;
 
 namespace react.net.Controllers
 {
     [Route("/api/[Controller]")]
-    public class TodoController : ControllerBase
+    public class TaskController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly ITodoRepository _todoRepository;
-        public TodoController(IConfiguration configuration, ITodoRepository todoRepository)
+        private readonly ITaskRepository _taskRepository;
+        public TaskController(IConfiguration configuration, ITaskRepository taskRepository)
         {
             _configuration = configuration;
-            _todoRepository = todoRepository;
+            _taskRepository = taskRepository;
         }
 
         [HttpGet]
@@ -22,7 +22,7 @@ namespace react.net.Controllers
         {
             try
             {
-                var todos = _todoRepository.GetAll();
+                var todos = _taskRepository.GetAll();
                 return new ObjectResult(todos);
             }
             catch (Exception ex)
@@ -32,7 +32,7 @@ namespace react.net.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] TodoModel obj)
+        public IActionResult Post([FromBody] TaskModel obj)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace react.net.Controllers
                 if (string.IsNullOrWhiteSpace(obj.Name))
                     return BadRequest(new { message = "Please specify name" });
 
-                _todoRepository.Create(obj);
+                _taskRepository.Create(obj);
                 return Ok(new { obj.Name });
             }
             catch (Exception ex)

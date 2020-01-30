@@ -1,6 +1,6 @@
 namespace react.net.Models
 {
-    public class TodoModel
+    public class TaskModel
     {
         public int ID { get; set; }
         public string Name { get; set; }
