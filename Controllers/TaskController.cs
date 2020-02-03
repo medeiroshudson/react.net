@@ -40,8 +40,21 @@ namespace react.net.Controllers
                 if (string.IsNullOrWhiteSpace(obj.Name))
                     return BadRequest(new { message = "Please specify name" });
 
-                _taskRepository.Create(obj);
-                return Ok(new { obj.Name });
+                TaskModel task = _taskRepository.Create(obj);
+                return Ok(new { task });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        public IActionResult Remove(int id){
+            try
+            {
+                var task = _taskRepository.Remove(id);
+                return Ok(new { task });
             }
             catch (Exception ex)
             {

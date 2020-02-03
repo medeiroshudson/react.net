@@ -12,27 +12,39 @@ namespace react.net.Repositories.Task
     {
         public TaskRepository(IConfiguration configuration) : base(configuration) { }
 
-        public void Create(TaskModel obj)
+        public TaskModel Create(TaskModel obj)
         {
-            string query = $@"INSERT INTO [dbo].[Task]
-                            ([Name]
-                            ,[Disabled])
-                            VALUES
-                            ('{obj.Name}'
-                            ,'0')";
-
-            using (var con = new SqlConnection(base.GetConnection()))
+            using (var con = new SqlConnection(GetConnection()))
             {
-                con.Query(query);
+                int taskID;
+                TaskModel task;
+
+                // registering task
+                string queryRegister = $@"INSERT INTO [dbo].[Task]
+                                        ([Name]
+                                        ,[Disabled])
+                                        VALUES
+                                        ('{obj.Name}'
+                                        ,'0')
+                                        
+                                        SELECT CAST(SCOPE_IDENTITY() as int)";
+
+                taskID = con.Query<int>(queryRegister).Single();
+
+                // returning registered task
+                string querySelect = $@"SELECT * FROM Task WHERE ID = {taskID}";
+                task = con.Query<TaskModel>(querySelect).Single();
+
+                return task;
             }
         }
 
         public IEnumerable<TaskModel> GetAll()
         {
             IEnumerable<TaskModel> result;
-            string query = "SELECT * FROM Task";
+            string query = "SELECT * FROM Task WHERE Disabled = 0";
 
-            using (var con = new SqlConnection(base.GetConnection()))
+            using (var con = new SqlConnection(GetConnection()))
             {
                 result = con.Query<TaskModel>(query);
             }
@@ -40,19 +52,25 @@ namespace react.net.Repositories.Task
             return result;
         }
 
-        public void Remove(int id)
+        public TaskModel Remove(int id)
         {
             string querySelect = $@"SELECT * FROM Task WHERE ID = {id}";
             string queryDisable = $@"UPDATE Task SET Disabled = 1 WHERE ID = {id}";
 
-            using (var con = new SqlConnection(base.GetConnection()))
+            using (var con = new SqlConnection(GetConnection()))
             {
                 var task = con.Query<TaskModel>(querySelect).FirstOrDefault();
 
                 if (task == null)
                     throw new AppException("Task not found.");
 
+                // disabling task
                 con.Execute(queryDisable);
+
+                // returning disabled task
+                task = con.Query<TaskModel>(querySelect).FirstOrDefault();
+
+                return task;
             }
         }
     }

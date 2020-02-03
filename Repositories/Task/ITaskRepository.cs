@@ -6,7 +6,7 @@ namespace react.net.Repositories.Task
     public interface ITaskRepository
     {
         IEnumerable<TaskModel> GetAll();
-        void Create(TaskModel obj);
-        void Remove(int id);
+        TaskModel Create(TaskModel obj);
+        TaskModel Remove(int id);
     }
 }

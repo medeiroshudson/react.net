@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import * as courseActions from "./../../store/actions/course";
+import * as taskActions from "./../../store/actions/task";
 
 import { Card, List, Input, Button } from "antd";
 
 export default function Dashboard() {
   const [input, setInput] = useState("");
 
-  const courses = useSelector(state => state.course);
+  const tasks = useSelector(state => state.task);
   const dispatch = useDispatch();
 
   // loading initial list from api
   useEffect(() => {
-    dispatch(courseActions.loadCourse());
+    dispatch(taskActions.loadTask());
   }, [])
 
-  function addCourse() {
-    dispatch(courseActions.addCourse(input));
+  function addTask() {
+    dispatch(taskActions.addTask(input));
+    setInput("")
   }
 
-  function removeCourse(id){
-    dispatch(courseActions.removeCourse(id));
+  function removeTask(id){
+    dispatch(taskActions.removeTask(id));
   }
 
   return (
@@ -33,16 +34,16 @@ export default function Dashboard() {
         />
         <Button
           type="primary"
-          onClick={addCourse}
+          onClick={addTask}
           style={{ marginTop: "16px", marginBottom: "16px" }}
         >
           Adicionar
         </Button>
         <List
           bordered
-          dataSource={courses}
+          dataSource={tasks}
           renderItem={item => (
-            <List.Item actions={[<Button type="danger" onClick={() => removeCourse(item.id)}>Excluir</Button>]}>
+            <List.Item actions={[<Button type="danger" onClick={() => removeTask(item.id)}>Excluir</Button>]}>
               {item.name}
             </List.Item>
           )}

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Configuration;
 
 namespace react.net.Repositories
@@ -12,20 +13,11 @@ namespace react.net.Repositories
 
         public string GetConnection()
         {
+            bool isProduction = Convert.ToBoolean(_configuration["Databases:0:isProduction"]);
 
-            string isProduction = _configuration.GetSection("Databases:0").GetSection("isProduction").Value;
-            string connection;
-
-            if (isProduction == "True")
-            {
-                connection = _configuration.GetSection("Databases:0").GetSection("productionConnectionString").Value;
-            }
-            else
-            {
-                connection = _configuration.GetSection("Databases:0").GetSection("developmentConnectionString").Value;
-            }
-
-            return connection;
+            return isProduction
+            ? _configuration["Databases:0:productionConnectionString"]
+            : _configuration["Databases:0:developmentConnectionString"];
         }
     }
 }
